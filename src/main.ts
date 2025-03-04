@@ -1,4 +1,4 @@
-import {debug, info, setFailed} from '@actions/core'
+import {debug, info, setFailed, setOutput, getInput} from '@actions/core'
 import {cleanupTempDir, createTempDir, isPullRequestEvent, parseToBoolean} from './blackduck-security-action/utility'
 import {Bridge} from './blackduck-security-action/bridge-cli'
 import {getGitHubWorkspaceDir as getGitHubWorkspaceDirV2} from 'actions-artifact-v2/lib/internal/shared/config'
@@ -14,6 +14,12 @@ export async function run() {
   let formattedCommand = ''
   let isBridgeExecuted = false
   let exitCode
+
+  const markBuildStatus = parseToBoolean(getInput('mark_build_status'))
+  const continueOnFailureCodes = getInput('continue_on_failure_codes')
+    .split(',')
+    .map(code => parseInt(code.trim()))
+    .filter(code => !isNaN(code))
 
   try {
     const sb = new Bridge()
@@ -38,6 +44,7 @@ export async function run() {
     isBridgeExecuted = getBridgeExitCode(error as Error)
     throw error
   } finally {
+    setOutput("exit_code", exitCode)
     const uploadSarifReportBasedOnExitCode = exitCode === 0 || exitCode === 8
     debug(`Bridge CLI execution completed: ${isBridgeExecuted}`)
     if (isBridgeExecuted) {
@@ -70,6 +77,13 @@ export async function run() {
     }
     await cleanupTempDir(tempDir)
   }
+  if (markBuildStatus && exitCode === 8) {
+    info('Policy violation (exit code 8) treated as success due to mark_build_status=true')
+    return 0
+  } else if (continueOnFailureCodes.length > 0 && continueOnFailureCodes.includes(exitCode)) {
+    info(`Exit code ${exitCode} in continue_on_failure_codes, treating as non-failing`)
+    return 0
+  }
 }
 
 export function logBridgeExitCodes(message: string): string {
@@ -95,7 +109,19 @@ export function getBridgeExitCode(error: Error): boolean {
   return false
 }
 
-run().catch(error => {
+// run().catch(error => {
+//   if (error.message != undefined) {
+//     setFailed('Workflow failed! '.concat(logBridgeExitCodes(error.message)))
+//   } else {
+//     setFailed('Workflow failed! '.concat(logBridgeExitCodes(error)))
+//   }
+// })
+
+run().then(exitCode => {
+  if (exitCode !== 0) {
+    info(`Black Duck scan completed with exit code ${exitCode}`)
+  }
+}).catch(error => {
   if (error.message != undefined) {
     setFailed('Workflow failed! '.concat(logBridgeExitCodes(error.message)))
   } else {
