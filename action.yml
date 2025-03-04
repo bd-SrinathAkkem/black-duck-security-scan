@@ -245,6 +245,16 @@ inputs:
   polaris_policy_badges_maxCount:
     description: 'To limit number of badges to be displayed on the GitHub repository for polaris'
     required: false
+  mark_build_status:
+    description: 'If true, treat exit code 8 as success'
+    required: false
+    default: 'false'
+  continue_on_failure_codes:
+    description: 'Comma-separated list of exit codes to treat as non-failing'
+    required: false
+outputs:
+  exit_code:
+    description: 'The numeric exit code returned by the Black Duck scan'
 runs:
   using: 'node20'
   main: 'dist/index.js'
