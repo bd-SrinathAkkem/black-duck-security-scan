@@ -38,6 +38,13 @@ export async function run() {
       isBridgeExecuted = true
       info('Black Duck Security Action workflow execution completed')
     }
+    if (markBuildStatus && exitCode === 8) {
+      info('Policy violation (exit code 8) treated as success due to mark_build_status=true')
+      return 0
+    } else if (continueOnFailureCodes.length > 0 && continueOnFailureCodes.includes(exitCode)) {
+      info(`Exit code ${exitCode} in continue_on_failure_codes, treating as non-failing`)
+      return 0
+    }
     return exitCode
   } catch (error) {
     exitCode = getBridgeExitCodeAsNumericValue(error as Error)
@@ -45,7 +52,6 @@ export async function run() {
     throw error
   } finally {
     setOutput('exit_code', exitCode)
-    console.log(`::set-output name=exit_code::${exitCode}`)
     info(`Setting Exit Code ${exitCode} to output Variable.`)
     const uploadSarifReportBasedOnExitCode = exitCode === 0 || exitCode === 8
     debug(`Bridge CLI execution completed: ${isBridgeExecuted}`)
@@ -78,13 +84,6 @@ export async function run() {
       }
     }
     await cleanupTempDir(tempDir)
-  }
-  if (markBuildStatus && exitCode === 8) {
-    info('Policy violation (exit code 8) treated as success due to mark_build_status=true')
-    return 0
-  } else if (continueOnFailureCodes.length > 0 && continueOnFailureCodes.includes(exitCode)) {
-    info(`Exit code ${exitCode} in continue_on_failure_codes, treating as non-failing`)
-    return 0
   }
 }
 
