@@ -44,8 +44,8 @@ export async function run() {
     isBridgeExecuted = getBridgeExitCode(error as Error)
     throw error
   } finally {
-    setOutput("exit_code", exitCode)
-    console.log(`::set-output name=exit_code::${exitCode}`); 
+    setOutput('exit_code', exitCode)
+    console.log(`::set-output name=exit_code::${exitCode}`)
     info(`Setting Exit Code ${exitCode} to output Variable.`)
     const uploadSarifReportBasedOnExitCode = exitCode === 0 || exitCode === 8
     debug(`Bridge CLI execution completed: ${isBridgeExecuted}`)
@@ -119,14 +119,16 @@ export function getBridgeExitCode(error: Error): boolean {
 //   }
 // })
 
-run().then(exitCode => {
-  if (exitCode !== 0) {
-    info(`Black Duck scan completed with exit code ${exitCode}`)
-  }
-}).catch(error => {
-  if (error.message != undefined) {
-    setFailed('Workflow failed! '.concat(logBridgeExitCodes(error.message)))
-  } else {
-    setFailed('Workflow failed! '.concat(logBridgeExitCodes(error)))
-  }
-})
+run()
+  .then(exitCode => {
+    if (exitCode !== 0) {
+      info(`Black Duck scan completed with exit code ${exitCode}`)
+    }
+  })
+  .catch(error => {
+    if (error.message != undefined) {
+      setFailed('Workflow failed! '.concat(logBridgeExitCodes(error.message)))
+    } else {
+      setFailed('Workflow failed! '.concat(logBridgeExitCodes(error)))
+    }
+  })
