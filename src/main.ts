@@ -13,9 +13,7 @@ export async function run() {
   const tempDir = await createTempDir()
   let formattedCommand = ''
   let isBridgeExecuted = false
-  let exitCode
-
-  const markBuildStatus = (getInput('mark_build_status') || 'FAILURE').toUpperCase()
+  let exitCode: number | undefined
 
   try {
     const sb = new Bridge()
@@ -30,7 +28,7 @@ export async function run() {
     }
     // Execute bridge command
     exitCode = await sb.executeBridgeCommand(formattedCommand, getGitHubWorkspaceDirV2())
-    if (exitCode === 0 || markBuildStatus === 'SUCCESS' || (markBuildStatus === 'UNSTABLE' && exitCode === 8)) {
+    if (exitCode === 0 || inputs.MARK_BUILD_STATUS === constants.BUILD_STATUS.SUCCESS || (inputs.MARK_BUILD_STATUS === constants.BUILD_STATUS.UNSTABLE && exitCode === constants.BRIDGE_BREAK_EXIT_CODE)) {
       isBridgeExecuted = true
       info('Black Duck Security Action workflow execution completed')
     }
@@ -40,7 +38,7 @@ export async function run() {
     isBridgeExecuted = getBridgeExitCode(error as Error)
     throw error
   } finally {
-    setOutput('status', exitCode)
+    if (inputs.RETURN_STATUS) setOutput(constants.EXIT_OUTPUT_STATUS, exitCode)
     const uploadSarifReportBasedOnExitCode = exitCode === 0 || exitCode === 8
     debug(`Bridge CLI execution completed: ${isBridgeExecuted}`)
     if (isBridgeExecuted) {
