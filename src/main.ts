@@ -8,6 +8,12 @@ import {uploadDiagnostics, uploadSarifReportAsArtifact} from './blackduck-securi
 import {isNullOrEmptyValue} from './blackduck-security-action/validators'
 import {GitHubClientServiceFactory} from './blackduck-security-action/factory/github-client-service-factory'
 
+// Configuration object for the action.
+const config = {
+  markBuildStatus: inputs.MARK_BUILD_STATUS,
+  returnStatus: inputs.RETURN_STATUS
+}
+
 export async function run() {
   info('Black Duck Security Action started...')
   const tempDir = await createTempDir()
@@ -26,19 +32,19 @@ export async function run() {
       info('Network air gap is enabled, skipping bridge CLI download.')
       await sb.validateBridgePath()
     }
-    // Execute bridge command
+    // Execute bridge command and handle exit code
     exitCode = await sb.executeBridgeCommand(formattedCommand, getGitHubWorkspaceDirV2())
-    if (exitCode === 0 || inputs.MARK_BUILD_STATUS === constants.BUILD_STATUS.SUCCESS || (inputs.MARK_BUILD_STATUS === constants.BUILD_STATUS.UNSTABLE && exitCode === constants.BRIDGE_BREAK_EXIT_CODE)) {
-      isBridgeExecuted = true
-      info('Black Duck Security Action workflow execution completed')
-    }
+    isBridgeExecuted = handleExitCode(exitCode)
     return exitCode
   } catch (error) {
     exitCode = getBridgeExitCodeAsNumericValue(error as Error)
     isBridgeExecuted = getBridgeExitCode(error as Error)
     throw error
   } finally {
-    if (inputs.RETURN_STATUS) setOutput(constants.EXIT_OUTPUT_STATUS, exitCode)
+    if (config.returnStatus) {
+      debug(`Setting output 'exit-status' to ${exitCode}`)
+      setOutput(constants.EXIT_OUTPUT_STATUS, exitCode)
+    }
     const uploadSarifReportBasedOnExitCode = exitCode === 0 || exitCode === 8
     debug(`Bridge CLI execution completed: ${isBridgeExecuted}`)
     if (isBridgeExecuted) {
@@ -94,6 +100,25 @@ export function getBridgeExitCode(error: Error): boolean {
     return !isNaN(num)
   }
   return false
+}
+
+// Handles the exit code and logs appropriate messages.
+function handleExitCode(exitCode: number | undefined, errorMessage = '') {
+  const isPolicyViolation = exitCode === 8
+  const isSuccess = exitCode === 0 || config.markBuildStatus === constants.BUILD_STATUS.SUCCESS
+  const isUnstableBreak = config.markBuildStatus === constants.BUILD_STATUS.UNSTABLE && isPolicyViolation
+
+  if (isSuccess) {
+    info('Black Duck Security Action workflow execution completed.')
+    return true
+  } else if (isUnstableBreak) {
+    info(`::warning::Exit Code: ${exitCode} Policy violations detected; treated as unstable proceeding with successful build.`)
+    return true
+  } else {
+    const message = errorMessage ? logBridgeExitCodes(errorMessage) : `Unknown exit code: ${exitCode}`
+    info(`::warning::Bridge CLI failed with ${message}`)
+    return false
+  }
 }
 
 run().catch(error => {
