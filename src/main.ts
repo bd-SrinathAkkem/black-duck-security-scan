@@ -104,19 +104,17 @@ export function getBridgeExitCode(error: Error): boolean {
 
 // Handles the exit code and logs appropriate messages.
 function handleExitCode(exitCode: number | undefined, errorMessage = '') {
-  const isPolicyViolation = exitCode === 8
-  const isSuccess = exitCode === 0 || config.markBuildStatus === constants.BUILD_STATUS.SUCCESS
-  const isUnstableBreak = config.markBuildStatus === constants.BUILD_STATUS.UNSTABLE && isPolicyViolation
+  const isPolicyViolation = config.markBuildStatus === constants.BUILD_STATUS.SUCCESS && exitCode === 8
 
-  if (isSuccess) {
+  if (exitCode === 0) {
     info('Black Duck Security Action workflow execution completed.')
     return true
-  } else if (isUnstableBreak) {
+  } else if (isPolicyViolation) {
     info(`::warning::Exit Code: ${exitCode} Policy violations detected; treated as unstable proceeding with successful build.`)
     return true
   } else {
     const message = errorMessage ? logBridgeExitCodes(errorMessage) : `Unknown exit code: ${exitCode}`
-    info(`::warning::Bridge CLI failed with ${message}`)
+    info(`::error::Bridge CLI failed with ${message}`)
     return false
   }
 }

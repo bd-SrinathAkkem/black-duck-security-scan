@@ -293,13 +293,11 @@ export const POLARIS_POLICY_BADGES_CREATE_KEY = 'polaris_policy_badges_create'
 export const POLARIS_POLICY_BADGES_MAX_COUNT_KEY = 'polaris_policy_badges_maxCount'
 
 export const RETURN_STATUS_KEY = 'return_status'
-export const RETURN_DEFAULT = true
+export const RETURN_STATUS_DEFAULT_VALUE = true
 export const MARK_BUILD_STATUS_KEY = 'mark_build_status'
 export const EXIT_OUTPUT_STATUS = 'status'
-export const BRIDGE_BREAK_EXIT_CODE = 8
 
 export enum BUILD_STATUS {
   SUCCESS = 'SUCCESS',
-  FAILURE = 'FAILURE',
-  UNSTABLE = 'UNSTABLE'
+  FAILURE = 'FAILURE'
 }
