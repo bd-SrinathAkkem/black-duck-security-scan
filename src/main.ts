@@ -33,7 +33,8 @@ export async function run() {
       await sb.validateBridgePath()
     }
     // Execute bridge command and handle exit code
-    exitCode = await sb.executeBridgeCommand(formattedCommand, getGitHubWorkspaceDirV2())
+    // exitCode = await sb.executeBridgeCommand(formattedCommand, getGitHubWorkspaceDirV2())
+    exitCode = 8
     isBridgeExecuted = handleExitCode(exitCode)
     return exitCode
   } catch (error) {
