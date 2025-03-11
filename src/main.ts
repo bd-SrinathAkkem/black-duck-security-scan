@@ -41,7 +41,7 @@ export async function run() {
     exitCode = getBridgeExitCodeAsNumericValue(error as Error)
     isBridgeExecuted = getBridgeExitCode(error as Error)
     throw error
-  } finally {
+  } finally {git add
     if (config.returnStatus) {
       debug(`Setting output 'exit-status' to ${exitCode}`)
       setOutput(constants.EXIT_OUTPUT_STATUS, exitCode)
