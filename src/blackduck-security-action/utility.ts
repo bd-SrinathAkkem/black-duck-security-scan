@@ -5,7 +5,7 @@ import {APPLICATION_NAME, GITHUB_ENVIRONMENT_VARIABLES} from '../application-con
 import {rmRF} from '@actions/io'
 import {getGitHubWorkspaceDir} from 'actions-artifact-v2/lib/internal/shared/config'
 import * as constants from '../application-constants'
-import {debug} from '@actions/core'
+import {debug, info} from '@actions/core'
 
 export function cleanUrl(url: string): string {
   if (url && url.endsWith('/')) {
@@ -78,7 +78,7 @@ export function checkJobResult(buildStatus?: string): string | undefined {
   if (buildStatus && Object.values(constants.BUILD_STATUS).includes(buildStatus as constants.BUILD_STATUS)) {
     return buildStatus
   } else if (buildStatus) {
-    debug(`Unsupported value for ${constants.MARK_BUILD_STATUS_KEY}: ${buildStatus}`)
+    info(`Unsupported value for ${constants.MARK_BUILD_STATUS_KEY}: ${buildStatus}`)
   }
   return undefined
 }
