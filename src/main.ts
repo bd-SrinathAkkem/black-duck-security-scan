@@ -1,5 +1,5 @@
 import {debug, info, setFailed, setOutput, getInput} from '@actions/core'
-import {cleanupTempDir, createTempDir, isPullRequestEvent, parseToBoolean} from './blackduck-security-action/utility'
+import {checkJobResult, cleanupTempDir, createTempDir, isPullRequestEvent, parseToBoolean} from './blackduck-security-action/utility'
 import {Bridge} from './blackduck-security-action/bridge-cli'
 import {getGitHubWorkspaceDir as getGitHubWorkspaceDirV2} from 'actions-artifact-v2/lib/internal/shared/config'
 import * as constants from './application-constants'
@@ -8,18 +8,12 @@ import {uploadDiagnostics, uploadSarifReportAsArtifact} from './blackduck-securi
 import {isNullOrEmptyValue} from './blackduck-security-action/validators'
 import {GitHubClientServiceFactory} from './blackduck-security-action/factory/github-client-service-factory'
 
-// Configuration object for the action.
-const config = {
-  markBuildStatus: inputs.MARK_BUILD_STATUS,
-  returnStatus: inputs.RETURN_STATUS
-}
-
 export async function run() {
   info('Black Duck Security Action started...')
   const tempDir = await createTempDir()
   let formattedCommand = ''
   let isBridgeExecuted = false
-  let exitCode: number | undefined
+  let exitCode
 
   try {
     const sb = new Bridge()
@@ -32,20 +26,26 @@ export async function run() {
       info('Network air gap is enabled, skipping bridge CLI download.')
       await sb.validateBridgePath()
     }
-    // Execute bridge command and handle exit code
-    // exitCode = await sb.executeBridgeCommand(formattedCommand, getGitHubWorkspaceDirV2())
-    exitCode = 8
-    isBridgeExecuted = handleExitCode(exitCode)
+    // Execute bridge command
+    exitCode = await sb.executeBridgeCommand(formattedCommand, getGitHubWorkspaceDirV2())
+    const taskResult: string | undefined = checkJobResult(inputs.MARK_BUILD_STATUS)
+    if (exitCode === 0) {
+      info('Black Duck Security Action workflow execution completed.')
+      isBridgeExecuted = true
+    } else if (exitCode === 8 && taskResult!== undefined && taskResult === constants.BUILD_STATUS.SUCCESS) {
+      info(`::warning::Exit Code: ${exitCode} Policy violations detected; Marking the build ${taskResult} as configured in the task input.`)
+      isBridgeExecuted = true
+    }
     return exitCode
   } catch (error) {
     exitCode = getBridgeExitCodeAsNumericValue(error as Error)
     isBridgeExecuted = getBridgeExitCode(error as Error)
     throw error
-  } finally {git add
-    if (config.returnStatus) {
-      debug(`Setting output 'exit-status' to ${exitCode}`)
-      setOutput(constants.EXIT_OUTPUT_STATUS, exitCode)
-      console.log(constants.TEST)
+  } finally {
+    // The statement set the exit code in the 'status' variable which can be used in the YAML file
+    if (parseToBoolean(inputs.RETURN_STATUS)) {
+      debug(`Setting output variable ${constants.TASK_RETURN_STATUS} with exit code ${exitCode}`)
+      setOutput(constants.TASK_RETURN_STATUS, exitCode)
     }
     const uploadSarifReportBasedOnExitCode = exitCode === 0 || exitCode === 8
     debug(`Bridge CLI execution completed: ${isBridgeExecuted}`)
@@ -102,25 +102,6 @@ export function getBridgeExitCode(error: Error): boolean {
     return !isNaN(num)
   }
   return false
-}
-
-// Handles the exit code and logs appropriate messages.
-function handleExitCode(exitCode: number | undefined, errorMessage = '') {
-  const isPolicyViolation = exitCode === 8
-  const isSuccess = exitCode === 0 || config.markBuildStatus === constants.BUILD_STATUS.SUCCESS
-  const isUnstableBreak = config.markBuildStatus === constants.BUILD_STATUS.UNSTABLE && isPolicyViolation
-
-  if (isSuccess) {
-    info('Black Duck Security Action workflow execution completed.')
-    return true
-  } else if (isUnstableBreak) {
-    info(`::warning::Exit Code: ${exitCode} Policy violations detected; treated as unstable proceeding with successful build.`)
-    return true
-  } else {
-    const message = errorMessage ? logBridgeExitCodes(errorMessage) : `Unknown exit code: ${exitCode}`
-    info(`::warning::Bridge CLI failed with ${message}`)
-    return false
-  }
 }
 
 run().catch(error => {
