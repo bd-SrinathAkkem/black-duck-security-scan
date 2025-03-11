@@ -45,6 +45,7 @@ export async function run() {
     if (config.returnStatus) {
       debug(`Setting output 'exit-status' to ${exitCode}`)
       setOutput(constants.EXIT_OUTPUT_STATUS, exitCode)
+      console.log(constants.TEST)
     }
     const uploadSarifReportBasedOnExitCode = exitCode === 0 || exitCode === 8
     debug(`Bridge CLI execution completed: ${isBridgeExecuted}`)

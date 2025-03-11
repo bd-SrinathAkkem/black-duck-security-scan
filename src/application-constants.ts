@@ -297,6 +297,7 @@ export const RETURN_DEFAULT = true
 export const MARK_BUILD_STATUS_KEY = 'mark_build_status'
 export const EXIT_OUTPUT_STATUS = 'status'
 export const BRIDGE_BREAK_EXIT_CODE = 8
+export const TEST = `'echo "status_test={exitCode}" >> "$GITHUB_OUTPUT"'`
 
 export enum BUILD_STATUS {
   SUCCESS = 'SUCCESS',
