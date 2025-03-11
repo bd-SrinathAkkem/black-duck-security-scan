@@ -29,12 +29,12 @@ export async function run() {
     // Execute bridge command
     // exitCode = await sb.executeBridgeCommand(formattedCommand, getGitHubWorkspaceDirV2())
     exitCode = 8
-    const taskResult: string | undefined = checkJobResult('success')
+    const taskResult: string | undefined = checkJobResult(inputs.MARK_BUILD_STATUS)
     if (exitCode === 0) {
-      info('Black Duck Security Action workflow execution completed.')
+      info('Black Duck Security Action workflow execution completed')
       isBridgeExecuted = true
-    } else if (exitCode === 8 && taskResult !== undefined && taskResult === constants.BUILD_STATUS.SUCCESS) {
-      info(`::warning::Exit Code: ${exitCode} Policy violations detected; Marking the build ${taskResult} as configured in the task input.`)
+    } else if (exitCode === 8 && taskResult === constants.BUILD_STATUS.SUCCESS) {
+      info(`Marking the build ${taskResult} as configured in the task`)
       isBridgeExecuted = true
     }
     return exitCode
