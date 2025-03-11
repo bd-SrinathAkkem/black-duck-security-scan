@@ -32,7 +32,7 @@ export async function run() {
     if (exitCode === 0) {
       info('Black Duck Security Action workflow execution completed.')
       isBridgeExecuted = true
-    } else if (exitCode === 8 && taskResult!== undefined && taskResult === constants.BUILD_STATUS.SUCCESS) {
+    } else if (exitCode === 8 && taskResult !== undefined && taskResult === constants.BUILD_STATUS.SUCCESS) {
       info(`::warning::Exit Code: ${exitCode} Policy violations detected; Marking the build ${taskResult} as configured in the task input.`)
       isBridgeExecuted = true
     }

@@ -76,9 +76,9 @@ export function isGitHubCloud(): boolean {
 
 export function checkJobResult(buildStatus?: string): string | undefined {
   if (buildStatus && Object.values(constants.BUILD_STATUS).includes(buildStatus as constants.BUILD_STATUS)) {
-    return buildStatus;
+    return buildStatus
   } else if (buildStatus) {
-    console.log(`Unsupported value for ${constants.MARK_BUILD_STATUS_KEY}: ${buildStatus}`);
+    debug(`Unsupported value for ${constants.MARK_BUILD_STATUS_KEY}: ${buildStatus}`)
   }
-  return undefined;
+  return undefined
 }
