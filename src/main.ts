@@ -27,8 +27,7 @@ export async function run() {
       await sb.validateBridgePath()
     }
     // Execute bridge command
-    // exitCode = await sb.executeBridgeCommand(formattedCommand, getGitHubWorkspaceDirV2())
-    exitCode = 8
+    exitCode = await sb.executeBridgeCommand(formattedCommand, getGitHubWorkspaceDirV2())
     isBridgeExecuted = exitCode === 0 || (exitCode === 8 && checkJobResult(inputs.MARK_BUILD_STATUS) === constants.BUILD_STATUS.SUCCESS)
     info(exitCode === 8 && isBridgeExecuted ? `Marking the build ${inputs.MARK_BUILD_STATUS} as configured in the task.` : 'Black Duck Security Action workflow execution completed successfully.')
     return exitCode
