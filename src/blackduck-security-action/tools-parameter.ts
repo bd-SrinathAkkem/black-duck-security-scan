@@ -519,7 +519,7 @@ export class BridgeToolsParameter {
     // if (isBoolean(inputs.THIN_CLIENT_ENABLED)) {
     //   try {
     //     validateProductWorkflowVersion(inputs.BLACKDUCKSCA_VERSION)
-    blackduckData.data.blackducksca.version = {version: inputs.BLACKDUCKSCA_VERSION}
+    blackduckData.data.blackducksca.version = inputs.BLACKDUCKSCA_VERSION
     //   } catch (error) {
     //     debug((error as Error).message)
     //   }
