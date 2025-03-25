@@ -93,7 +93,7 @@ export class BridgeToolsParameter {
     if (parseToBoolean(inputs.THIN_CLIENT_ENABLED) && inputs.POLARIS_VERSION) {
       try {
         validateProductWorkflowVersion(inputs.POLARIS_VERSION)
-        polData.data.polaris.version = {version: inputs.POLARIS_VERSION}
+        polData.data.polaris.version = inputs.POLARIS_VERSION
       } catch (error) {
         debug((error as Error).message)
       }
@@ -519,7 +519,7 @@ export class BridgeToolsParameter {
     if (parseToBoolean(inputs.THIN_CLIENT_ENABLED) && inputs.BLACKDUCKSCA_VERSION) {
       try {
         validateProductWorkflowVersion(inputs.BLACKDUCKSCA_VERSION)
-        blackduckData.data.blackducksca.version = {version: inputs.BLACKDUCKSCA_VERSION}
+        blackduckData.data.blackducksca.version = inputs.BLACKDUCKSCA_VERSION
       } catch (error) {
         debug((error as Error).message)
       }
@@ -605,7 +605,7 @@ export class BridgeToolsParameter {
     if (parseToBoolean(inputs.THIN_CLIENT_ENABLED) && inputs.SRM_VERSION) {
       try {
         validateProductWorkflowVersion(inputs.SRM_VERSION)
-        srmData.data.srm.version = {version: inputs.SRM_VERSION}
+        srmData.data.srm.version = inputs.SRM_VERSION
       } catch (error) {
         debug((error as Error).message)
       }
