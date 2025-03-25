@@ -301,3 +301,6 @@ export enum BUILD_STATUS {
 export const MARK_BUILD_STATUS_DEFAULT = BUILD_STATUS.FAILURE
 export const TASK_RETURN_STATUS = 'status'
 export const EXIT_CODE_ERROR = 8
+
+export const CUSTOM_INSTALL_DIR = 'custom_install_dir'
+export const DEFAULT_BRIDGE_INSTALL_DIR = '.blackduck/integrations'

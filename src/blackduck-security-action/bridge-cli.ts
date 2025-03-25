@@ -36,7 +36,7 @@ export class Bridge {
     this.bridgeUrlLatestPattern = this.bridgeArtifactoryURL.concat('latest/bridge-cli-bundle-$platform.zip')
   }
 
-  private getBridgeDefaultPath(): string {
+  /*private getBridgeDefaultPath(): string {
     let bridgeDefaultPath = ''
     const subFolder = 'bridge-cli-bundle-'.concat(this.getOSPlatform())
     const osName = process.platform
@@ -49,8 +49,30 @@ export class Bridge {
     }
 
     return bridgeDefaultPath
+  }*/
+
+  private getBridgeDefaultPath(): string {
+    const subFolder = `bridge-cli-bundle-${this.getOSPlatform()}`
+    const osName = process.platform
+    const homeDir = process.env['HOME'] as string
+    const userProfile = process.env['USERPROFILE'] as string
+    let customInstallDir = inputs.CUSTOM_INSTALL_DIR
+    let defaultInstallDir = constants.DEFAULT_BRIDGE_INSTALL_DIR
+
+    if (customInstallDir) {
+      customInstallDir = osName === WINDOWS_PLATFORM_NAME ? customInstallDir.replace(/\//g, '\\') : customInstallDir.replace(/\\/g, '/')
+      const baseDir = osName === WINDOWS_PLATFORM_NAME ? userProfile : homeDir
+      const defaultPath = osName === WINDOWS_PLATFORM_NAME ? BRIDGE_CLI_DEFAULT_PATH_WINDOWS : osName === MAC_PLATFORM_NAME ? BRIDGE_CLI_DEFAULT_PATH_MAC : BRIDGE_CLI_DEFAULT_PATH_LINUX
+      return path.join(baseDir, customInstallDir, defaultPath, subFolder)
+    } else {
+      defaultInstallDir = osName === WINDOWS_PLATFORM_NAME ? defaultInstallDir.replace(/\//g, '\\') : defaultInstallDir.replace(/\\/g, '/')
+      const baseDir = osName === WINDOWS_PLATFORM_NAME ? userProfile : homeDir
+      const defaultPath = osName === WINDOWS_PLATFORM_NAME ? BRIDGE_CLI_DEFAULT_PATH_WINDOWS : osName === MAC_PLATFORM_NAME ? BRIDGE_CLI_DEFAULT_PATH_MAC : BRIDGE_CLI_DEFAULT_PATH_LINUX
+      return path.join(baseDir, defaultInstallDir, defaultPath, subFolder)
+    }
   }
-  private getBridgeCLIDownloadDefaultPath(): string {
+
+  /*private getBridgeCLIDownloadDefaultPath(): string {
     let bridgeCLIDefaultPath = ''
     const osName = process.platform
     if (osName === MAC_PLATFORM_NAME) {
@@ -62,7 +84,20 @@ export class Bridge {
     }
 
     return bridgeCLIDefaultPath
+  }*/
+
+  private getBridgeCLIDownloadDefaultPath(): string {
+    const osName = process.platform
+    const homeDir = process.env['HOME'] as string
+    const userProfile = process.env['USERPROFILE'] as string
+    const customInstallDir = inputs.CUSTOM_INSTALL_DIR ? (osName === WINDOWS_PLATFORM_NAME ? inputs.CUSTOM_INSTALL_DIR.replace(/\//g, '\\') : inputs.CUSTOM_INSTALL_DIR.replace(/\\/g, '/')) : constants.DEFAULT_BRIDGE_INSTALL_DIR
+
+    const baseDir = osName === WINDOWS_PLATFORM_NAME ? userProfile : homeDir
+    const defaultPath = osName === WINDOWS_PLATFORM_NAME ? BRIDGE_CLI_DEFAULT_PATH_WINDOWS : osName === MAC_PLATFORM_NAME ? BRIDGE_CLI_DEFAULT_PATH_MAC : BRIDGE_CLI_DEFAULT_PATH_LINUX
+
+    return path.join(baseDir, customInstallDir, defaultPath)
   }
+
   async checkIfBridgeExists(bridgeVersion: string): Promise<boolean> {
     await this.validateBridgePath()
     const osName = process.platform

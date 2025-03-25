@@ -90,3 +90,5 @@ export const POLARIS_POLICY_BADGES_MAX_COUNT = getInput(constants.POLARIS_POLICY
 
 export const RETURN_STATUS = getInput(constants.RETURN_STATUS_KEY)?.trim() || true
 export const MARK_BUILD_STATUS = getInput(constants.MARK_BUILD_STATUS_KEY)?.trim() || constants.MARK_BUILD_STATUS_DEFAULT
+
+export const CUSTOM_INSTALL_DIR = getInput(constants.CUSTOM_INSTALL_DIR)?.trim() || ''
