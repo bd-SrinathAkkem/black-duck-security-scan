@@ -15,6 +15,7 @@ export interface SRMData extends AsyncMode {
   project?: {id?: string; name?: string}
   assessment: {types: string[]}
   branch?: Branch
+  version?: SRMVersion
 }
 
 export interface ProjectData {
@@ -33,3 +34,7 @@ export interface ExecutionPath {
 export interface DetectData extends ExecutionPath, Omit<BlackDuckDetect, 'install' | 'scan'> {}
 
 export interface CoverityData extends ExecutionPath, CoverityDetect {}
+
+export interface SRMVersion {
+  version?: string
+}

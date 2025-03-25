@@ -23,6 +23,7 @@ export interface PolarisData extends AsyncMode {
   test?: Test
   reports?: Reports
   policy?: Policy
+  version?: PolarisVersion
 }
 
 export interface Policy {
@@ -55,4 +56,8 @@ export interface Branch {
 
 export interface Test {
   sca: {type: string}
+}
+
+export interface PolarisVersion {
+  version?: string
 }

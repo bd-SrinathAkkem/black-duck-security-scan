@@ -92,3 +92,10 @@ export const RETURN_STATUS = getInput(constants.RETURN_STATUS_KEY)?.trim() || tr
 export const MARK_BUILD_STATUS = getInput(constants.MARK_BUILD_STATUS_KEY)?.trim() || constants.MARK_BUILD_STATUS_DEFAULT
 
 export const CUSTOM_INSTALL_DIR = getInput(constants.CUSTOM_INSTALL_DIR)?.trim() || ''
+
+export const BLACKDUCKSCA_VERSION = getInput(constants.BLACKDUCKSCA_VERSION_KEY)?.trim() || ''
+export const SRM_VERSION = getInput(constants.SRM_VERSION_KEY)?.trim() || ''
+export const POLARIS_VERSION = getInput(constants.POLARIS_VERSION_KEY)?.trim() || ''
+
+export const BRIDGE_WORKFLOW_UPDATE_ENABLED = getInput(constants.BRIDGE_WORKFLOW_UPDATE_ENABLED_KEY)?.trim() || false
+export const THIN_CLIENT_ENABLED = getInput(constants.THIN_CLIENT_ENABLED_KEY)?.trim() || true

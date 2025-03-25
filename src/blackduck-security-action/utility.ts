@@ -82,3 +82,16 @@ export function checkJobResult(buildStatus?: string): string | undefined {
   }
   return undefined
 }
+
+export function validateProductWorkflowVersion(version: string): void {
+  const validProducts = constants.VALID_PRODUCTS.join('|')
+  const regex = new RegExp(`^(${validProducts})@[0-9]+\\.[0-9]+(\\.[0-9]+)?$`)
+
+  if (!regex.test(version)) {
+    const errorMsg = `Invalid PRODUCT_WORKFLOW_VERSION '${version}'. Expected format: <product>@<version> (e.g., polaris@2.20). Valid products: ${constants.VALID_PRODUCTS.join(', ')}`
+    debug(errorMsg)
+    throw new Error(errorMsg)
+  }
+
+  debug(`PRODUCT_WORKFLOW_VERSION '${version}' is valid.`)
+}

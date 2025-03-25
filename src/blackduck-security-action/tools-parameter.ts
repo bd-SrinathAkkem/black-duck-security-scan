@@ -9,7 +9,7 @@ import {Coverity, CoverityDetect} from './input-data/coverity'
 import {BlackDuckSCA, BLACKDUCKSCA_SCAN_FAILURE_SEVERITIES, BlackDuckDetect, BlackDuckFixPrData} from './input-data/blackduck'
 import {GithubData} from './input-data/github'
 import * as constants from '../application-constants'
-import {isBoolean, isPullRequestEvent, parseToBoolean} from './utility'
+import {isBoolean, isPullRequestEvent, parseToBoolean, validateProductWorkflowVersion} from './utility'
 import {SRM} from './input-data/srm'
 
 export class BridgeToolsParameter {
@@ -28,6 +28,7 @@ export class BridgeToolsParameter {
   static SPACE = ' '
   // Blackduck parameters
   private static BLACKDUCK_STAGE = 'blackducksca'
+  static BRIDGE_WORKFLOW_UPDATE_ENABLED_OPTION = '--update'
 
   constructor(tempDir: string) {
     this.tempDir = tempDir
@@ -86,6 +87,15 @@ export class BridgeToolsParameter {
         sca: {
           type: inputs.POLARIS_TEST_SCA_TYPE
         }
+      }
+    }
+
+    if (isBoolean(inputs.THIN_CLIENT_ENABLED)) {
+      try {
+        validateProductWorkflowVersion(inputs.POLARIS_VERSION)
+        polData.data.polaris.version = {version: inputs.POLARIS_VERSION}
+      } catch (error) {
+        debug((error as Error).message)
       }
     }
 
@@ -313,6 +323,10 @@ export class BridgeToolsParameter {
       covData.data.coverity.version = inputs.COVERITY_VERSION
     }
 
+    /*if (isBoolean(inputs.THIN_CLIENT_ENABLED)) {
+      covData.data.coverity.version = inputs.COVERITY_VERSION
+    }*/
+
     if (parseToBoolean(inputs.COVERITY_PRCOMMENT_ENABLED)) {
       if (isPrEvent) {
         /** Set Coverity PR comment inputs in case of PR context */
@@ -502,6 +516,15 @@ export class BridgeToolsParameter {
       blackduckData.data.network = {airGap: parseToBoolean(inputs.ENABLE_NETWORK_AIR_GAP)}
     }
 
+    if (isBoolean(inputs.THIN_CLIENT_ENABLED)) {
+      try {
+        validateProductWorkflowVersion(inputs.BLACKDUCKSCA_VERSION)
+        blackduckData.data.blackducksca.version = {version: inputs.BLACKDUCKSCA_VERSION}
+      } catch (error) {
+        debug((error as Error).message)
+      }
+    }
+
     blackduckData.data.detect = Object.assign({}, this.setDetectArgs(), blackduckData.data.detect)
 
     const inputJson = JSON.stringify(blackduckData)
@@ -574,6 +597,15 @@ export class BridgeToolsParameter {
     if (inputs.PROJECT_DIRECTORY) {
       srmData.data.project = {
         directory: inputs.PROJECT_DIRECTORY
+      }
+    }
+
+    if (isBoolean(inputs.THIN_CLIENT_ENABLED)) {
+      try {
+        validateProductWorkflowVersion(inputs.SRM_VERSION)
+        srmData.data.srm.version = {version: inputs.SRM_VERSION}
+      } catch (error) {
+        debug((error as Error).message)
       }
     }
 

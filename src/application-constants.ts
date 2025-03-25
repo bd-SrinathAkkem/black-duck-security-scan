@@ -304,3 +304,13 @@ export const EXIT_CODE_ERROR = 8
 
 export const CUSTOM_INSTALL_DIR = 'custom_install_dir'
 export const DEFAULT_BRIDGE_INSTALL_DIR = '.blackduck/integrations'
+
+export const BLACKDUCKSCA_VERSION_KEY = 'blackducksca_workflow_version'
+export const POLARIS_VERSION_KEY = 'polaris_workflow_version'
+export const SRM_VERSION_KEY = 'srm_workflow_version'
+
+export const BRIDGE_INTRANET_URL_KEY = 'bridge_intranet_url'
+
+export const BRIDGE_WORKFLOW_UPDATE_ENABLED_KEY = 'disable_update'
+export const THIN_CLIENT_ENABLED_KEY = 'thin_client_enabled'
+export const VALID_PRODUCTS = ['polaris', 'coverity', 'srm', 'blackducksca']

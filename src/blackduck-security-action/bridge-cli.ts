@@ -4,7 +4,7 @@ import {debug, error, info, warning} from '@actions/core'
 import {GITHUB_ENVIRONMENT_VARIABLES, NON_RETRY_HTTP_CODES, RETRY_COUNT, RETRY_DELAY_IN_MILLISECONDS, BRIDGE_CLI_DEFAULT_PATH_LINUX, BRIDGE_CLI_DEFAULT_PATH_MAC, BRIDGE_CLI_DEFAULT_PATH_WINDOWS, MAC_PLATFORM_NAME, LINUX_PLATFORM_NAME, WINDOWS_PLATFORM_NAME} from '../application-constants'
 import {tryGetExecutablePath} from '@actions/io/lib/io-util'
 import path from 'path'
-import {checkIfPathExists, cleanupTempDir, sleep} from './utility'
+import {checkIfPathExists, cleanupTempDir, parseToBoolean, sleep} from './utility'
 import * as inputs from './inputs'
 import {DownloadFileResponse, extractZipped, getRemoteFile} from './download-utility'
 import fs, {readFileSync} from 'fs'
@@ -263,6 +263,10 @@ export class Bridge {
       }
       if (validationErrors.length > 0) {
         error(new Error(validationErrors.join(',')))
+      }
+
+      if (parseToBoolean(inputs.BRIDGE_WORKFLOW_UPDATE_ENABLED) && parseToBoolean(inputs.THIN_CLIENT_ENABLED)) {
+        formattedCommand = formattedCommand.concat(BridgeToolsParameter.SPACE).concat(BridgeToolsParameter.BRIDGE_WORKFLOW_UPDATE_ENABLED_OPTION)
       }
 
       if (inputs.INCLUDE_DIAGNOSTICS) {

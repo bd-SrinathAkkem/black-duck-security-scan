@@ -31,6 +31,7 @@ export interface BlackDuckSCAData extends AsyncMode {
   fixpr?: BlackDuckFixPrData
   reports?: Reports
   policy?: Policy
+  version?: BlackDuckSCAVersion
 }
 
 export interface Policy {
@@ -79,4 +80,8 @@ export interface BlackDuckFixPrFilerData {
 
 export interface NetworkAirGap {
   airGap: boolean
+}
+
+export interface BlackDuckSCAVersion {
+  version?: string
 }
