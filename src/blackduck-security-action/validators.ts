@@ -118,3 +118,10 @@ export function validateBridgeUrl(url: string): boolean {
     return false
   }
 }
+
+export function validateProductWorkflowVersion(version: string): void {
+  const regex = /^[0-9]+\.[0-9]+\.[0-9]+$/
+  if (!regex.test(version)) {
+    throw new Error(`Invalid PRODUCT_WORKFLOW_VERSION '${version}'`)
+  }
+}

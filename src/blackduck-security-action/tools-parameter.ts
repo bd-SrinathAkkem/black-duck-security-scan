@@ -1,7 +1,7 @@
 import * as fs from 'fs'
 import path from 'path'
 import {debug, info} from '@actions/core'
-import {isNullOrEmptyValue, validateBlackduckFailureSeverities, validateCoverityInstallDirectoryParam} from './validators'
+import {isNullOrEmptyValue, validateBlackduckFailureSeverities, validateCoverityInstallDirectoryParam, validateProductWorkflowVersion} from './validators'
 import * as inputs from './inputs'
 import {Polaris} from './input-data/polaris'
 import {InputData} from './input-data/input-data'
@@ -9,7 +9,7 @@ import {Coverity, CoverityDetect} from './input-data/coverity'
 import {BlackDuckSCA, BLACKDUCKSCA_SCAN_FAILURE_SEVERITIES, BlackDuckDetect, BlackDuckFixPrData} from './input-data/blackduck'
 import {GithubData} from './input-data/github'
 import * as constants from '../application-constants'
-import {isBoolean, isPullRequestEvent, parseToBoolean, validateProductWorkflowVersion} from './utility'
+import {isBoolean, isPullRequestEvent, parseToBoolean} from './utility'
 import {SRM} from './input-data/srm'
 
 export class BridgeToolsParameter {
@@ -90,7 +90,7 @@ export class BridgeToolsParameter {
       }
     }
 
-    if (isBoolean(inputs.THIN_CLIENT_ENABLED)) {
+    if (parseToBoolean(inputs.THIN_CLIENT_ENABLED) && inputs.POLARIS_VERSION) {
       try {
         validateProductWorkflowVersion(inputs.POLARIS_VERSION)
         polData.data.polaris.version = {version: inputs.POLARIS_VERSION}
@@ -323,7 +323,7 @@ export class BridgeToolsParameter {
       covData.data.coverity.version = inputs.COVERITY_VERSION
     }
 
-    /*if (isBoolean(inputs.THIN_CLIENT_ENABLED)) {
+    /*if (parseToBoolean(inputs.THIN_CLIENT_ENABLED) && inputs.COVERITY_VERSION) {
       covData.data.coverity.version = inputs.COVERITY_VERSION
     }*/
 
@@ -516,14 +516,14 @@ export class BridgeToolsParameter {
       blackduckData.data.network = {airGap: parseToBoolean(inputs.ENABLE_NETWORK_AIR_GAP)}
     }
 
-    // if (isBoolean(inputs.THIN_CLIENT_ENABLED)) {
-    //   try {
-    //     validateProductWorkflowVersion(inputs.BLACKDUCKSCA_VERSION)
-    blackduckData.data.blackducksca.version = inputs.BLACKDUCKSCA_VERSION
-    //   } catch (error) {
-    //     debug((error as Error).message)
-    //   }
-    // }
+    if (parseToBoolean(inputs.THIN_CLIENT_ENABLED) && inputs.BLACKDUCKSCA_VERSION) {
+      try {
+        validateProductWorkflowVersion(inputs.BLACKDUCKSCA_VERSION)
+        blackduckData.data.blackducksca.version = {version: inputs.BLACKDUCKSCA_VERSION}
+      } catch (error) {
+        debug((error as Error).message)
+      }
+    }
 
     blackduckData.data.detect = Object.assign({}, this.setDetectArgs(), blackduckData.data.detect)
 
@@ -602,7 +602,7 @@ export class BridgeToolsParameter {
       }
     }
 
-    if (isBoolean(inputs.THIN_CLIENT_ENABLED)) {
+    if (parseToBoolean(inputs.THIN_CLIENT_ENABLED) && inputs.SRM_VERSION) {
       try {
         validateProductWorkflowVersion(inputs.SRM_VERSION)
         srmData.data.srm.version = {version: inputs.SRM_VERSION}

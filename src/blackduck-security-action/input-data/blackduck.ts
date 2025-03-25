@@ -31,7 +31,7 @@ export interface BlackDuckSCAData extends AsyncMode {
   fixpr?: BlackDuckFixPrData
   reports?: Reports
   policy?: Policy
-  version?: string
+  version?: BlackDuckSCAVersion
 }
 
 export interface Policy {
