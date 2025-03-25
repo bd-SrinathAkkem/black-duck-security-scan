@@ -25,7 +25,7 @@ export class GithubClientServiceBase implements GithubClientServiceInterface {
     this.repoName = this.githubRepo !== '' ? this.githubRepo.substring(this.githubRepo.indexOf('/') + 1, this.githubRepo.length).trim() : ''
     this.repoOwner = process.env[constants.GITHUB_ENVIRONMENT_VARIABLES.GITHUB_REPOSITORY_OWNER] || ''
     this.githubServerUrl = process.env[constants.GITHUB_ENVIRONMENT_VARIABLES.GITHUB_SERVER_URL] || ''
-    this.githubApiURL = this.githubServerUrl === constants.GITHUB_CLOUD_URL ? constants.GITHUB_CLOUD_API_URL : this.githubServerUrl
+    this.githubApiURL = process.env[constants.GITHUB_ENVIRONMENT_VARIABLES.GITHUB_API_URL] || ''
     this.commit_sha = process.env[constants.GITHUB_ENVIRONMENT_VARIABLES.GITHUB_SHA] || ''
     this.githubRef = process.env[constants.GITHUB_ENVIRONMENT_VARIABLES.GITHUB_REF] || ''
   }
@@ -38,8 +38,9 @@ export class GithubClientServiceBase implements GithubClientServiceInterface {
       return url.replace(/{(\d+)}/g, (match, index) => args[index] || '')
     }
     const endpoint = stringFormat(this.githubApiURL.concat(this.gitHubCodeScanningUrl), this.repoOwner, this.repoName)
+    info(`GHE Sarif Upload Endpoint: ${endpoint}`)
     const sarifFilePath = userSarifFilePath ? userSarifFilePath : getDefaultSarifReportPath(defaultSarifReportDirectory, true)
-
+    info(`SARIF File Path: ${sarifFilePath}`)
     if (checkIfPathExists(sarifFilePath)) {
       try {
         const sarifContent = fs.readFileSync(sarifFilePath, 'utf8')
@@ -57,8 +58,9 @@ export class GithubClientServiceBase implements GithubClientServiceInterface {
             Authorization: `Bearer ${this.githubToken}`,
             Accept: 'application/vnd.github+json'
           })
-          debug(`HTTP Status Code: ${httpResponse.message.statusCode}`)
-          debug(`HTTP Response Headers: ${JSON.stringify(httpResponse.message.headers)}`)
+          info(`HTTP Response: ${httpResponse}`)
+          info(`HTTP Status Code: ${httpResponse.message.statusCode}`)
+          info(`HTTP Response Headers: ${JSON.stringify(httpResponse.message.headers)}`)
           const responseBody = await httpResponse.readBody()
           const rateLimitRemaining = httpResponse.message?.headers[constants.X_RATE_LIMIT_REMAINING] || ''
           if (httpResponse.message.statusCode === constants.HTTP_STATUS_ACCEPTED) {
