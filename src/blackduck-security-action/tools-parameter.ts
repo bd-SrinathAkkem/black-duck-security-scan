@@ -529,6 +529,8 @@ export class BridgeToolsParameter {
 
     const inputJson = JSON.stringify(blackduckData)
 
+    info(inputJson)
+
     const stateFilePath = path.join(this.tempDir, BridgeToolsParameter.BD_STATE_FILE_NAME)
     fs.writeFileSync(stateFilePath, inputJson)
 
