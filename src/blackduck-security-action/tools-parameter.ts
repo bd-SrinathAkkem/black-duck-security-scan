@@ -516,14 +516,14 @@ export class BridgeToolsParameter {
       blackduckData.data.network = {airGap: parseToBoolean(inputs.ENABLE_NETWORK_AIR_GAP)}
     }
 
-    if (isBoolean(inputs.THIN_CLIENT_ENABLED)) {
-      try {
-        validateProductWorkflowVersion(inputs.BLACKDUCKSCA_VERSION)
-        blackduckData.data.blackducksca.version = {version: inputs.BLACKDUCKSCA_VERSION}
-      } catch (error) {
-        debug((error as Error).message)
-      }
-    }
+    // if (isBoolean(inputs.THIN_CLIENT_ENABLED)) {
+    //   try {
+    //     validateProductWorkflowVersion(inputs.BLACKDUCKSCA_VERSION)
+    blackduckData.data.blackducksca.version = {version: inputs.BLACKDUCKSCA_VERSION}
+    //   } catch (error) {
+    //     debug((error as Error).message)
+    //   }
+    // }
 
     blackduckData.data.detect = Object.assign({}, this.setDetectArgs(), blackduckData.data.detect)
 
