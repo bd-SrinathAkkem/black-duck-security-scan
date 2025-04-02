@@ -25,6 +25,7 @@ export class Bridge {
   bridgeUrlLatestPattern: string
   WINDOWS_PLATFORM = 'win64'
   LINUX_PLATFORM = 'linux64'
+  LINUX_ARM_PLATFORM = 'linux_arm'
   MAC_PLATFORM = 'macosx'
   MAC_ARM_PLATFORM = 'macos_arm'
 
@@ -343,7 +344,8 @@ export class Bridge {
       const isValidVersionForARM = semver.gte(version, constants.MIN_SUPPORTED_BRIDGE_CLI_MAC_ARM_VERSION)
       bridgeDownloadUrl = bridgeDownloadUrl.replace('$platform', isARM && isValidVersionForARM ? this.MAC_ARM_PLATFORM : this.MAC_PLATFORM)
     } else if (osName === LINUX_PLATFORM_NAME) {
-      bridgeDownloadUrl = bridgeDownloadUrl.replace('$platform', this.LINUX_PLATFORM)
+      const isARM = !os.cpus()[0].model.includes('Intel')
+      bridgeDownloadUrl = bridgeDownloadUrl.replace('$platform', isARM ? this.LINUX_ARM_PLATFORM : this.LINUX_PLATFORM)
     } else if (osName === WINDOWS_PLATFORM_NAME) {
       bridgeDownloadUrl = bridgeDownloadUrl.replace('$platform', this.WINDOWS_PLATFORM)
     }
@@ -358,7 +360,8 @@ export class Bridge {
       const isARM = !os.cpus()[0].model.includes('Intel')
       bridgeDownloadUrl = bridgeDownloadUrl.replace('$platform', isARM ? this.MAC_ARM_PLATFORM : this.MAC_PLATFORM)
     } else if (osName === LINUX_PLATFORM_NAME) {
-      bridgeDownloadUrl = bridgeDownloadUrl.replace('$platform', this.LINUX_PLATFORM)
+      const isARM = !os.cpus()[0].model.includes('Intel')
+      bridgeDownloadUrl = bridgeDownloadUrl.replace('$platform', isARM ? this.LINUX_ARM_PLATFORM : this.LINUX_PLATFORM)
     } else if (osName === WINDOWS_PLATFORM_NAME) {
       bridgeDownloadUrl = bridgeDownloadUrl.replace('$platform', this.WINDOWS_PLATFORM)
     }
@@ -372,7 +375,8 @@ export class Bridge {
       const isARM = !os.cpus()[0].model.includes('Intel')
       osPlatform = isARM ? this.MAC_ARM_PLATFORM : this.MAC_PLATFORM
     } else if (osName === LINUX_PLATFORM_NAME) {
-      osPlatform = this.LINUX_PLATFORM
+      const isARM = !os.cpus()[0].model.includes('Intel')
+      osPlatform = isARM ? this.LINUX_ARM_PLATFORM : this.LINUX_PLATFORM
     } else if (osName === WINDOWS_PLATFORM_NAME) {
       osPlatform = this.WINDOWS_PLATFORM
     }
