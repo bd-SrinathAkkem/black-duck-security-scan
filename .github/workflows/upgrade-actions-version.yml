@@ -15,11 +15,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install jq and gh
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y jq gh
-
       - name: Set Node.js 20.x
         uses: actions/setup-node@v4
         with:
@@ -29,7 +24,9 @@ jobs:
         run: npm ci
 
       - name: Rebuild the dist/ directory
-        run: npm run build && npm run package
+        run: |
+          export NODE_OPTIONS=--openssl-legacy-provider
+          npm run build && npm run package
 
       - name: Compare the expected and actual dist/ directories
         run: |
