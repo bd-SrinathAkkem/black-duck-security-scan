@@ -62,6 +62,7 @@ jobs:
           echo "Updating action version in package.json and package-lock.json files"
           git config --local user.name "$(git log -n 1 --pretty=format:%an)"
           git config --local user.email "$(git log -n 1 --pretty=format:%ae)"
+          git config set advice.addIgnoredFile false
           git checkout -b action_version_update
           
           echo "Running npm version to update version to ${{ env.NEW_VERSION }}"
