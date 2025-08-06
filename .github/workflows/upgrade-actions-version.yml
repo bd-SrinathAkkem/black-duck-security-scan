@@ -74,7 +74,7 @@ jobs:
           echo "Adding updated files to git"
           git add package.json package-lock.json dist/
           
-          git commit -m "upgrade action version to ${{ env.NEW_VERSION }} [skip ci]"
+          git commit -am "upgrade action version to ${{ env.NEW_VERSION }} [skip ci]"
           git push origin action_version_update --force
           
           gh pr create --base main --head action_version_update --title "Action version upgrade to ${{ env.NEW_VERSION }}" --body "${{ env.ACTION_NAME }} version upgrade to ${{ env.NEW_VERSION }}" --fill
