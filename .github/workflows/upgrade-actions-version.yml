@@ -74,6 +74,7 @@ jobs:
           npm version ${{ env.NEW_VERSION }} --no-git-tag-version
           
           echo "Rebuilding after version update"
+          export NODE_OPTIONS=--openssl-legacy-provider
           npm run build && npm run package
           
           echo "Adding updated files to git"
