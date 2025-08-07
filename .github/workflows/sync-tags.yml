@@ -5,9 +5,18 @@ on:
     inputs:
       version:
         description: 'SYNC VERSION'
-        required: true
         default: ""
         type: string
+      update_latest_tag:
+        description: 'Update latest tag'
+        required: false
+        default: true
+        type: boolean
+      update_major_tag:
+        description: 'Update major version tag'
+        required: false
+        default: true
+        type: boolean
 
 jobs:
   sync-tags:
@@ -50,6 +59,7 @@ jobs:
           echo "Tag v${{ env.VERSION }} exists"
 
       - name: Update major version tag
+        if: ${{ github.event.inputs.update_major_tag == 'true' }}
         run: |
           major_tag="v${{ env.MAJOR }}"
           echo "Updating major version tag: $major_tag"
@@ -70,6 +80,7 @@ jobs:
           git push origin $major_tag
 
       - name: Update latest tag
+        if: ${{ github.event.inputs.update_latest_tag == 'true' }}
         run: |
           latest_tag="latest"
           echo "Updating latest tag"
