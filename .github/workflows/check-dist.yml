@@ -56,6 +56,7 @@ jobs:
         run: |
           PR=$(jq -r .pull_request.number $GITHUB_EVENT_PATH)
           LINES=$(jq '.total.lines.pct' coverage/coverage-summary.json)
+          echo '' >> coverage-table.md
           echo '| File | % Stmts | % Branch | % Funcs | % Lines |' >> coverage-table.md
           echo '|------|---------|----------|---------|---------|' >> coverage-table.md
           jq -r '
@@ -87,7 +88,7 @@ jobs:
           ![Coverage](https://img.shields.io/badge/coverage-${LINES}%25-brightgreen)
 
           <details>
-          <summary><strong>▶ Show full coverage details</strong></summary>
+          <summary><strong>Show full coverage details</strong></summary>
 
           $(cat coverage-table.md)
 
