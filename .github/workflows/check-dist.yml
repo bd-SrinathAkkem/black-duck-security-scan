@@ -78,7 +78,7 @@ jobs:
               ($t.lines.pct | tostring)
             ] | "| " + join(" | ") + " |"
           ' coverage/coverage-summary.json)
-          sed -i '' "2i\\
+          sed -i "2i\\
           $TOTAL
           " coverage-table.md
           BODY="## 🧪 Test & Coverage Results
