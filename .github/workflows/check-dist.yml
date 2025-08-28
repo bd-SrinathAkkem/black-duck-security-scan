@@ -61,7 +61,7 @@ jobs:
           jq -r '
             to_entries[] | select(.key != "total") |
             [
-              (.key | capture("src/.*")?.string // .key | sub("^.*/src/"; "src/")),
+              (.key | gsub("^.*/src/"; "src/")),
               (.value.statements.pct | tostring),
               (.value.branches.pct | tostring),
               (.value.functions.pct | tostring),
