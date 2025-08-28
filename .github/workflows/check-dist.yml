@@ -56,7 +56,7 @@ jobs:
         run: |
           PR=$(jq -r .pull_request.number $GITHUB_EVENT_PATH)
           LINES=$(jq '.total.lines.pct' coverage/coverage-summary.json)
-          echo '| File | % Stmts | % Branch | % Funcs | % Lines |' > coverage-table.md
+          echo '| File | % Stmts | % Branch | % Funcs | % Lines |' >> coverage-table.md
           echo '|------|---------|----------|---------|---------|' >> coverage-table.md
           jq -r '
             to_entries[] | select(.key != "total") |
