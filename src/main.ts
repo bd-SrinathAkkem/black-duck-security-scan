@@ -1,3 +1,4 @@
+// Main.ts
 import {debug, info, setFailed, setOutput} from '@actions/core'
 import {checkJobResult, cleanupTempDir, createTempDir, isPullRequestEvent, parseToBoolean} from './blackduck-security-action/utility'
 import {Bridge} from './blackduck-security-action/bridge-cli'
