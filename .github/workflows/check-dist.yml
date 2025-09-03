@@ -1,5 +1,4 @@
-# Workflow: Checks if the checked-in dist/index.js matches the expected build output.
-# Ensures the dist/ directory is up-to-date and committed.
+# Workflow: Checks if the checked-in dist/index.js matches the expected build output. Ensures the dist/ directory is up-to-date and committed.
 name: Check dist/
 
 on:
