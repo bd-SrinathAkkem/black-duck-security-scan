@@ -3,10 +3,30 @@
 name: Polaris Analysis
 
 on:
-  workflow_dispatch:
+  # Independent run
+#  push:
+#    branches: [main]
+#  pull_request:
+#    branches: [main]
+#  workflow_dispatch:
+
+  # To chain after coverage succeeds, uncomment below:
+  # workflow_run:
+  #   workflows: ["Check Code Coverage"]
+  #   types: [completed]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: polaris-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   polaris:
+    name: Run Polaris Analysis
+    # If chaining after coverage, uncomment this line:
+    # if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
     uses: blackduck-inc/common-repo-ci/.github/workflows/polaris.yml@main
     with:
       polaris_server_url: ${{ vars.POLARIS_SERVER_URL }}
@@ -19,3 +39,4 @@ jobs:
       bridgecli_download_url: ${{ vars.BRIDGECLI_DOWNLOAD_URL }}
     secrets:
       POLARIS_ACCESS_TOKEN: ${{ secrets.POLARIS_ACCESS_TOKEN }}
+

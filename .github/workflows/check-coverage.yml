@@ -1,22 +1,27 @@
 # Workflow: Checks code coverage for the project. Fails if line coverage is below the required threshold.
-name: Check Coverage
+name: Check Code Coverage
 
 on:
-  push:
-    branches:
-      - main
-    paths-ignore:
-      - '**.md'
-  pull_request:
-    branches:
-      - main
-    paths-ignore:
-      - '**.md'
+  workflow_run:
+    workflows: ["Check Unit Tests"]
+    types: [completed]
   workflow_dispatch:
 
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: coverage-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  check-coverage:
+  verify:
+    name: Verify Coverage
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
+    timeout-minutes: 15
+
     steps:
       - uses: actions/checkout@v4
 

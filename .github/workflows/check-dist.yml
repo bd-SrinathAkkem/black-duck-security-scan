@@ -4,20 +4,25 @@ name: Check dist/
 
 on:
   push:
-    branches:
-      - main
-    paths-ignore:
-      - '**.md'
+    branches: [main]
+    paths-ignore: ["**.md"]
   pull_request:
-    branches:
-      - main
-    paths-ignore:
-      - '**.md'
+    branches: [main]
+    paths-ignore: ["**.md"]
   workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dist-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   check-dist:
+    name: Validate dist/
     runs-on: ubuntu-latest
+    timeout-minutes: 15
 
     steps:
       - uses: actions/checkout@v4
