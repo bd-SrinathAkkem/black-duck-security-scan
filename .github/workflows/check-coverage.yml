@@ -1,9 +1,9 @@
 # Workflow: Checks code coverage for the project. Fails if line coverage is below the required threshold.
-name: Check Coverage
+name: Check Code Coverage
 
 on:
   workflow_run:
-    workflows: ["test"]
+    workflows: ["Check Unit Tests"]
     types: [completed]
   workflow_dispatch:
 

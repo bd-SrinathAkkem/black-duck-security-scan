@@ -1,8 +1,9 @@
-name: Test
+# Workflow: Checks unit tests for the project. Fails if any tests do not pass.
+name: Check Unit Tests
 
 on:
   workflow_run:
-    workflows: ["dist"]
+    workflows: ["Check dist/"]
     types: [completed]
   workflow_dispatch:
 

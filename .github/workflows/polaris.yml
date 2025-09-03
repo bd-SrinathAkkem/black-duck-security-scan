@@ -12,7 +12,7 @@ on:
 
   # To chain after coverage succeeds, uncomment below:
   # workflow_run:
-  #   workflows: ["coverage"]
+  #   workflows: ["Check Code Coverage"]
   #   types: [completed]
 
 permissions:
