@@ -6,9 +6,6 @@ on:
   workflow_run:
     workflows: ["Check Code Coverage"]
     types: [completed]
-  pull_request_target:
-    branches: [main]
-    paths-ignore: ["**.md"]
   workflow_dispatch:
 
 permissions:

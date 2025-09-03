@@ -5,9 +5,6 @@ on:
   workflow_run:
     workflows: ["Check Unit Tests"]
     types: [completed]
-  pull_request_target:
-    branches: [main]
-    paths-ignore: ["**.md"]
   workflow_dispatch:
 
 permissions:
@@ -32,6 +29,7 @@ jobs:
         with:
           name: coverage-summary
           path: coverage
+
       - name: Check coverage threshold
         shell: bash
         run: |
@@ -41,6 +39,7 @@ jobs:
             echo "##[error]Line coverage is below 90%"
             exit 1
           fi
+
       - name: Comment coverage threshold on PR
         run: |
           PR=$(jq -r .pull_request.number $GITHUB_EVENT_PATH)
