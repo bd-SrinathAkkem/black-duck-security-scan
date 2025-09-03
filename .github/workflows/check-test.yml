@@ -5,6 +5,9 @@ on:
   workflow_run:
     workflows: ["Check dist/"]
     types: [completed]
+  pull_request_target:
+    branches: [main]
+    paths-ignore: ["**.md"]
   workflow_dispatch:
 
 permissions:
