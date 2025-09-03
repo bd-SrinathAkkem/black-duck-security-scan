@@ -2,12 +2,7 @@
 name: Check Unit Tests
 
 on:
-  workflow_run:
-    workflows: ["Check dist/"]
-    types: [completed]
-  pull_request_target:
-    branches: [main]
-    paths-ignore: ["**.md"]
+  workflow_call:
   workflow_dispatch:
 
 permissions:
@@ -21,9 +16,7 @@ concurrency:
 jobs:
   run:
     name: Run Unit Tests
-    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
-    timeout-minutes: 20
 
     steps:
       - uses: actions/checkout@v4

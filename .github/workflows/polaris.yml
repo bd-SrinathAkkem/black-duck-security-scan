@@ -3,12 +3,7 @@
 name: Polaris Analysis
 
 on:
-  workflow_run:
-    workflows: ["Check Code Coverage"]
-    types: [completed]
-  pull_request_target:
-    branches: [main]
-    paths-ignore: ["**.md"]
+  workflow_call:
   workflow_dispatch:
 
 permissions:
@@ -21,7 +16,6 @@ concurrency:
 jobs:
   polaris:
     name: Run Polaris Analysis
-    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
     uses: blackduck-inc/common-repo-ci/.github/workflows/polaris.yml@main
     with:
       polaris_server_url: ${{ vars.POLARIS_SERVER_URL }}

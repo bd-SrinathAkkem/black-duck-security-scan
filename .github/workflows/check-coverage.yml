@@ -2,12 +2,7 @@
 name: Check Code Coverage
 
 on:
-  workflow_run:
-    workflows: ["Check Unit Tests"]
-    types: [completed]
-  pull_request_target:
-    branches: [main]
-    paths-ignore: ["**.md"]
+  workflow_call:
   workflow_dispatch:
 
 permissions:
@@ -15,13 +10,12 @@ permissions:
   pull-requests: write
 
 concurrency:
-  group: code-coverage-${{ github.ref }}
+  group: coverage-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
   verify:
     name: Verify Coverage
-    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
@@ -32,6 +26,7 @@ jobs:
         with:
           name: coverage-summary
           path: coverage
+
       - name: Check coverage threshold
         shell: bash
         run: |
@@ -41,6 +36,7 @@ jobs:
             echo "##[error]Line coverage is below 90%"
             exit 1
           fi
+
       - name: Comment coverage threshold on PR
         run: |
           PR=$(jq -r .pull_request.number $GITHUB_EVENT_PATH)
