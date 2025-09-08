@@ -61,6 +61,11 @@ jobs:
           path: dist/
           retention-days: 1
 
+      # Fail job if dist check failed
+      - name: Fail if dist check failed
+        if: steps.dist-check.outputs.dist_failed == 'true'
+        run: exit 1
+
       # Run unit tests
       - name: Run tests and collect results
         id: test-results
@@ -84,11 +89,6 @@ jobs:
           name: coverage-summary
           path: coverage/coverage-summary.json
           retention-days: 1
-
-      # Fail job if dist check failed
-      - name: Fail if dist check failed
-        if: steps.dist-check.outputs.dist_failed == 'true'
-        run: exit 1
 
       - name: Comment test results on PR
         if: github.event_name == 'pull_request'
