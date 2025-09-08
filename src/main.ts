@@ -167,7 +167,6 @@ function getBridgeVersion(bridgePath: string): string {
   }
 }
 
-// final step
 run().catch(error => {
   if (error.message !== undefined) {
     const isReturnStatusEnabled = parseToBoolean(inputs.RETURN_STATUS)
